@@ -1,0 +1,23 @@
+package com.lzz.wangpan.enums;
+
+public enum InterceptorLevel {
+    /**
+     * 不拦截
+     */
+    NONE,
+
+    /**
+     * 用户级别拦截
+     */
+    USER,
+
+    /**
+     * 管理员级别拦截
+     */
+    ADMIN,
+
+    /**
+     * 系统用户
+     */
+    SYSTEM
+}

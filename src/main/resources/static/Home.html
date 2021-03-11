@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    .el-menu{
+  background-color:  #f7f7f7;
+  border: 0;
+  /*text-align: center;*/
+
+}
+  .item{
+    color:#424e67;
+    font-size: 14px;
+  }
+.el-progress-bar__outer{
+
+}
+#leader{
+  width: 150px;
+  height: 600px;
+
+}
+.size{
+  position: relative;
+  right: -20px;
+}
+.bt {
+    width: 100%;
+    background-color: white;
+    height: 40px;
+    font: 12px/1.5 "Microsoft YaHei", arial, SimSun, "宋体";
+    line-height: 30px;
+  }
+  .nav{
+    width: 100%;
+    background-color: white;
+    height: 20px;
+    /*font: 12px/1.5 "Microsoft YaHei", arial, SimSun, "宋体";*/
+    font-size: 8px;
+    line-height: 20px;
+  }
+
+  .el-table-column {
+    height: 48px;
+    line-height: 48px;
+  }
+
+  .el-table {
+   width: 100%;
+    font: 12px/1.5 "Microsoft YaHei", arial, SimSun, "宋体";
+  }
+
+  #search {
+    width: 315px;
+    border-radius: 33px;
+    background-color: #f7f7f7;
+    float: right;
+    text-align: center;
+    height: 32px;
+    line-height: 32px;
+
+  }
+
+  .search {
+    border: none;
+    background-color: #f7f7f7;
+    height: 30px;
+    width: 248px;
+  }
+
+  img {
+    width: 30px;
+    height: 30px;
+  }
+
+  a {
+    color: #424e67;
+    text-decoration: none;
+  }
+
+  a:hover {
+    color: #09AAFF;
+  }
+  .el-icon-delete{
+    color:#F56C6C;
+  }
+  #wra{
+    overflow: hidden;
+  }
+  input{
+    outline: none;
+  }
+  .box-card{
+height: 60px;
+width: 100%;
+    box-shadow: 0 0 !important;
+    border: 0 !important;
+
+  }
+.nav{
+  margin-top: -20px;
+  margin-left: 40px;
+  font-family: PingFangSC-Semibold;
+  font-size: 16px;
+  color: black;
+  text-decoration: none;
+
+}
+  a:hover{
+    color:#0098ea;
+  }
+  .first{
+    color:#0098ea;
+  }
+  .avatar{
+    float: right;
+    width: 30px;
+    height:30px;
+  }
+  img{
+    width: 30px;
+    margin-top: -5px;
+  }
+  .name{
+    margin-left: 10px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #424e67;
+  }
+
+     
+  
+  </style>
+</head>
+<body>
+  <div id="app">
+    <el-container>
+        <el-header><el-card class="box-card">
+          <a   class="nav first">我的网盘</a>
+      
+          <span style="float: right;" class="name" >{{name}}</span>
+            <el-dropdown class="avatar">
+        <span class="el-dropdown-link">
+           <img src="../assets/logo.png" alt=""  slot="reference" >
+      
+        </span>
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item>设置</el-dropdown-item>
+              <el-dropdown-item divided ><a @click="loginout">退出登陆</a></el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
+      
+      
+        </el-card></el-header>
+        <el-container>
+        <el-aside>  <div>
+
+          <el-col :span="12" >
+      
+          <el-menu
+            default-active="2"
+            class="el-menu-vertical-demo"
+      
+            background-color="#545c64"
+            text-color="#fff"
+            active-text-color="#ffd04b"
+            id="leader">
+      
+            <el-menu-item index="2">
+              <i class="el-icon-menu"></i>
+              <span slot="title">图片</span>
+            </el-menu-item>
+            <el-menu-item index="3" disabled>
+              <i class="el-icon-document"></i>
+              <span slot="title">视频</span>
+            </el-menu-item>
+            <el-menu-item index="4" disabled>
+              <i class="el-icon-setting"></i>
+              <span slot="title">其他</span>
+            </el-menu-item>
+      
+          </el-menu>
+          <el-progress :text-inside="false" :stroke-width="10" :percentage="use" :show-text="false"></el-progress>
+            <el-breadcrumb separator="/" style="margin-top: 5px;font-size: 13px;" class="size">
+              <el-breadcrumb-item>{{usesize}}</el-breadcrumb-item>
+              <el-breadcrumb-item>500M</el-breadcrumb-item>
+            </el-breadcrumb>
+      
+        </el-col>
+      
+      
+        </div></el-aside>
+        <el-main><div id="wra">
+          <div class="bt" >
+     
+           <el-button type="text" size="medium" icon="el-icon-arrow-left" @click="back" v-if="path=='/'?false:true">返回上一级</el-button>
+           <el-button type="primary" size="medium" icon="el-icon-upload2" @click="addfileKey = true">上传文件</el-button>
+           <el-button  size="medium" @click="addfolder = true">新建文件夹</el-button>
+     
+           <el-dialog
+             title="输入文件名字"
+             :visible.sync="addfolder"
+             width="20%"
+            >
+             <el-input v-model="input" placeholder="请输入内容"></el-input>
+             <span slot="footer" class="dialog-footer">
+         <el-button @click="addfolder = false">取 消</el-button>
+         <el-button type="primary" @click="newfolder">确 定</el-button>
+       </span>
+           </el-dialog>
+           <el-dialog
+             title="上传"
+             :visible.sync="addfileKey"
+             width="30%"
+             >
+             <el-upload
+               class="upload-demo"
+               drag
+               action=""
+     
+               :before-upload="beforeUpload"
+               multiple
+     
+               v-loading="loading"
+               element-loading-text="正在上传"
+             >
+               <i class="el-icon-upload"></i>
+               <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+               <div class="el-upload__tip" slot="tip"></div>
+             </el-upload>
+             <span slot="footer" class="dialog-footer">
+       </span>
+           </el-dialog>
+           <div id="search"><input placeholder="请输入内容" class="search" v-model="keywords"/><i class="el-icon-search"></i>
+           </div>
+         </div>
+         <el-table :data="search(keywords)"  :height="height">
+           <el-table-column prop="name" label="文件名" width="800">
+             <template slot-scope="{row,$index}">
+               <!-- <img :src="'../../static/img/'+row.img" alt="" style="cursor: default;
+                     display: block;
+                     height: 26px;
+                     width: 26px;
+                     position: absolute;
+                     left:0px;
+                     top: 10px;"> -->
+               <a  style="position: absolute;
+     left:40px;top: 12px;" @click="next(row.name)">{{row.name}}</a>
+     
+             </template>
+           </el-table-column >
+           <el-table-column prop="size" label="大小" width="270">
+           </el-table-column>
+           <el-table-column prop="time" label="修改日期" width="220">
+           </el-table-column>
+           <el-table-column>
+             <template slot-scope="{row,$index}">
+             <el-tooltip class="item" effect="dark" content="下载" placement="bottom-start">
+               <el-button type="text"><i class="el-icon-download" @click="download(row.name,$index)" ></i></el-button>
+             </el-tooltip>
+             <el-tooltip class="item" effect="dark" content="删除" placement="bottom-start" >
+               <el-button type="text"><i class="el-icon-delete" @click="del(row.name,$index)" ></i></el-button>
+             </el-tooltip>
+     
+             </template>
+           </el-table-column>
+         </el-table>
+     
+       </div>
+     
+       </div></el-main>
+        </el-container>
+      </el-container>
+
+        
+  </div>
+          <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+          <script src="vue.js"></script>
+          <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+
+
+          <script>
+            axios.defaults.withCredentials = true;
+
+
+             axios.defaults.baseURL = 'http://west2zz.free.idcfengye.com'
+
+             new Vue( {
+               el:'#app',
+               data() {
+      return {
+        input:'',
+        height: window.innerHeight -62 -80 -40 ,
+        tableData: [],
+        keywords: '',
+        addfileKey: false,
+        loading:false,
+        path:'/',
+        username:localStorage.getItem('name'),
+        addfolder:false,
+        use:"0",
+       usesize:'0'
+
+
+      }
+    },
+    created() {
+
+// this.init()
+    },
+    methods: {
+      init(){
+       localStorage.setItem('path','/')
+        axios.get('file/user/uploaded', {
+         params:{
+          username:localStorage.getItem('name'),
+          offset:100
+
+          }
+        }).then(res => {
+
+          res.data.forEach(item => {
+            if (item.size == '') {
+              var size = '-'
+            } else {
+              if (item.size < 1048576) {
+                var size = (item.size / 1024).toFixed(2) + 'KB'
+              } else if (item.size > 1048576 && item.size < 1073741824) {
+                var size = (item.size / 1024 / 1024).toFixed(2) + 'MB'
+              } else if (item.size > 1073741824) {
+                var size = (item.size / 1024 / 1024 / 1024).toFixed(2) + 'GB'
+              }
+            }
+            this.tableData.push({name: item.name, time: item.create_time,  size: size})
+          })
+          res.data.file.forEach(item => {
+            if (item.size == '') {
+              var size = '-'
+            } else {
+              if (item.size < 1048576) {
+                var size = (item.size / 1024).toFixed(2) + 'KB'
+              } else if (item.size > 1048576 && item.size < 1073741824) {
+                var size = (item.size / 1024 / 1024).toFixed(2) + 'MB'
+              } else if (item.size > 1073741824) {
+                var size = (item.size / 1024 / 1024 / 1024).toFixed(2) + 'GB'
+              }
+            }
+            this.tableData.push({name: item.name, time: item.create_time,  size: size})
+          })
+        })
+      },
+
+      search(key) {
+        //搜索
+        var newlist = []
+        this.tableData.forEach(item => {
+          if (item.name.indexOf(key) != -1) {
+            newlist.push(item)
+          }
+        })
+        return newlist
+      },
+
+      beforeUpload(file){
+          this.loading=true
+    let fd = new FormData();
+    var myDate = new Date()
+    fd.append('file',file);//传文件
+
+    fd.append('user',localStorage.getItem('name'));//传其他参数
+    // fd.append('categoryId',1);//传其他参数
+    // fd.append('description','')
+    // fd.append('tag','image')
+    // fd.append('local_url',localStorage.getItem('path'))
+
+
+          var that=this
+          axios.get('category/all').then(res1=>{
+            console.log(res1.data )
+          axios.get('config/global').then(res2=>{
+            console.log(res2.data)
+            axios.post('file' ,fd,{headers:{
+      'Content-type':'multipart/form-data'
+    }
+                 }).then(res=>{
+                   console.log(res.data)
+
+     if(res.data){
+       this.addfileKey=false
+       that.tableData=[]
+      alert('上传成功')
+       that.loading=false
+      //  this.init()
+     }
+
+      that.loading=false
+    })
+
+            })
+          })
+
+    // axios.post('file' ,fd,{headers:{
+    //   'Content-type':'multipart/form-data'
+    // }
+    //              }).then(res=>{
+    //                console.log(res.data)
+
+    //  if(res.data){
+    //    this.addfileKey=false
+    //    that.tableData=[]
+    //    that.$message({
+    //      showClose: true,
+    //      message: '上传成功',
+    //      type: 'success'
+    //    });
+    //    that.loading=false
+    //    this.init()
+    //  }
+
+    //   that.loading=false
+    // })
+    return false
+  },
+      del(name,index){
+        this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.tableData.splice(index,1)
+          axios.delete('file/{id}',this.$qs.stringify({
+            data:{
+
+            id:index}
+          })).then(res=>{
+            if(res.data.status =='success'){
+              this.$message({
+                type: 'success',
+                message: '删除成功!'
+              });
+            }
+            else{
+              this.$message({
+                type: 'warning',
+                message: '删除失败!'
+              });
+            }
+
+          })
+
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          });
+        });
+
+      },
+      download(name,index){
+       axios.get('/download',{
+         params:{
+           file_id:index
+         }
+       })
+      },
+      newfolder(){
+        axios.post('filemanager/content',{
+
+          username:this.username,
+          local_url:localStorage.getItem('path'),
+          fname:this.input
+        }).then(res=>{
+             console.log(res.data)
+            if(res.data.result){
+              this.addfolder=false
+              this.input=''
+
+              this.next('')
+              this.$alert('创建文件夹成功', '提示', {
+                confirmButtonText: '确定',
+                callback: action => {
+                  this.$message({
+                    type: 'info',
+                    message:"再见"
+                  });
+                }
+              });
+            }
+            else{
+              this.$alert('创建失败'
+                );
+            }
+        })
+
+      },
+      next(name)  {
+        var newpath=localStorage.getItem('path')+name+'/'
+        this.path=newpath
+        axios.post('all', this.$qs.stringify({
+          username:localStorage.getItem('name'),
+          local_url:newpath
+
+        })).then(res => {
+          localStorage.setItem('path',newpath)
+          this.tableData=[]
+          res.data.data.dir.forEach(item => {
+            if (item.size == '') {
+              var size = '-'
+            } else {
+              if (item.size < 1048576) {
+                var size = (item.size / 1024).toFixed(2) + 'KB'
+              } else if (item.size > 1048576 && item.size < 1073741824) {
+                var size = (item.size / 1024 / 1024).toFixed(2) + 'MB'
+              } else if (item.size > 1073741824) {
+                var size = (item.size / 1024 / 1024 / 1024).toFixed(2) + 'GB'
+              }
+            }
+            this.tableData.push({name: item.name, time: item.mtime, img: item.img, size: size})
+          })
+          res.data.data.file.forEach(item => {
+            if (item.size == '') {
+              var size = '-'
+            } else {
+              if (item.size < 1048576) {
+                var size = (item.size / 1024).toFixed(2) + 'KB'
+              } else if (item.size > 1048576 && item.size < 1073741824) {
+                var size = (item.size / 1024 / 1024).toFixed(2) + 'MB'
+              } else if (item.size > 1073741824) {
+                var size = (item.size / 1024 / 1024 / 1024).toFixed(2) + 'GB'
+              }
+            }
+            this.tableData.push({name: item.name, time: item.create_time, img: item.img, size: size})
+          })
+        })
+
+
+      },
+      back(){
+       // console.log( localStorage.getItem('path').split('/'))
+        var str=localStorage.getItem('path').split('/')
+        str.splice(0,1)
+        str.splice(str.length-1,1)
+        str.splice(str.length-1,1)
+        var backpath='/'
+        str.forEach(item=>{
+          backpath+=item+'/'
+        })
+        this.path=backpath
+       axios.post('all', this.$qs.stringify({
+
+          username:localStorage.getItem('name'),
+          path:backpath
+
+        })).then(res => {
+          localStorage.setItem('path',backpath)
+          this.tableData=[]
+          res.data.forEach(item => {
+            if(item.file.local_url = backpath){
+            if (item.size == '') {
+              var size = '-'
+            } else {
+              if (item.size < 1048576) {
+                var size = (item.size / 1024).toFixed(2) + 'KB'
+              } else if (item.size > 1048576 && item.size < 1073741824) {
+                var size = (item.size / 1024 / 1024).toFixed(2) + 'MB'
+              } else if (item.size > 1073741824) {
+                var size = (item.size / 1024 / 1024 / 1024).toFixed(2) + 'GB'
+              }
+            }
+            this.tableData.push({name: item.name, time: item.create_time, img: item.img, size: size})
+         } })
+          res.data.file.forEach(item => {
+            if(item.local_url == backpath){
+
+            if (item.size == '') {
+              var size = '-'
+            } else {
+              if (item.size < 1048576) {
+                var size = (item.size / 1024).toFixed(2) + 'KB'
+              } else if (item.size > 1048576 && item.size < 1073741824) {
+                var size = (item.size / 1024 / 1024).toFixed(2) + 'MB'
+              } else if (item.size > 1073741824) {
+                var size = (item.size / 1024 / 1024 / 1024).toFixed(2) + 'GB'
+              }
+            }
+            this.tableData.push({name: item.name, time: item.mtime, img: item.img, size: size})
+         } })
+        })
+
+      }
+      }
+
+       
+    })         </script>
+
+
+<script src="../vue.js"></script>
+<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+
+<script>
+    
+</script>
+
+</div>
+
+</body>
+</html>
